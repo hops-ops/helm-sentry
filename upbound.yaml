@@ -1,0 +1,24 @@
+apiVersion: meta.dev.upbound.io/v2alpha1
+kind: Project
+metadata:
+  name: helm-sentry
+spec:
+  dependsOn:
+  - apiVersion: pkg.crossplane.io/v1
+    kind: Provider
+    package: xpkg.crossplane.io/crossplane-contrib/provider-helm
+    version: '>=v1.0.2'
+  - apiVersion: pkg.crossplane.io/v1
+    kind: Function
+    package: xpkg.crossplane.io/crossplane-contrib/function-auto-ready
+    version: '>=v0.6.0'
+  description: Installs Sentry self-hosted error tracking and performance monitoring
+    Helm chart.
+  license: Apache-2.0
+  maintainer: Patrick Lee Scott <pat@patscott.io>
+  readme: |
+    # helm-sentry
+
+    Installs Sentry for self-hosted error tracking and performance monitoring using Crossplane and the Helm provider.
+  repository: ghcr.io/hops-ops/helm-sentry
+  source: github.com/hops-ops/helm-sentry

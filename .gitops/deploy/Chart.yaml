@@ -1,0 +1,4 @@
+apiVersion: v2
+name: helm-sentry
+description: Installs Sentry self-hosted error tracking and performance monitoring Helm chart.
+version: 0.0.1

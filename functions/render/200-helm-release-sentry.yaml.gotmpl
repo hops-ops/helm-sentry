@@ -1,0 +1,23 @@
+{{- $state := get $ "$state" }}
+{{- $sn := $state.sentry }}
+---
+apiVersion: helm.m.crossplane.io/v1beta1
+kind: Release
+metadata:
+  name: {{ $sn.releaseName }}
+  annotations:
+    {{ setResourceNameAnnotation "helm-release-sentry" }}
+  labels: {{ $sn.labels | toJson }}
+spec:
+  forProvider:
+    chart:
+      name: sentry
+      repository: https://sentry-kubernetes.github.io/charts
+      version: 27.11.0
+    namespace: {{ $sn.namespace }}
+    values: {{ $sn.values | toJson }}
+  managementPolicies: {{ $sn.managementPolicies | toJson }}
+  providerConfigRef:
+    name: {{ $sn.providerConfigRef.name }}
+    kind: {{ $sn.providerConfigRef.kind }}
+  rollbackLimit: 3
