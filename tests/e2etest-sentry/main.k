@@ -15,10 +15,29 @@ _items = [
                 autoUpgrade.channel = "None"
             }
             defaultConditions = ["Ready"]
-            timeoutSeconds = 1800
-            cleanupTimeoutSeconds = 600
+            timeoutSeconds = 2400  # 40 minutes - Sentry has many components
+            cleanupTimeoutSeconds = 1200
             skipDelete = False
             extraResources = [
+                # Grant cluster-admin to all SAs in crossplane-system namespace
+                # Required for Helm provider to create namespaces and install charts
+                {
+                    apiVersion = "rbac.authorization.k8s.io/v1"
+                    kind = "ClusterRoleBinding"
+                    metadata.name = "crossplane-system-cluster-admin"
+                    roleRef = {
+                        apiGroup = "rbac.authorization.k8s.io"
+                        kind = "ClusterRole"
+                        name = "cluster-admin"
+                    }
+                    subjects = [
+                        {
+                            kind = "Group"
+                            name = "system:serviceaccounts:crossplane-system"
+                            apiGroup = "rbac.authorization.k8s.io"
+                        }
+                    ]
+                }
                 {
                     apiVersion = "helm.m.crossplane.io/v1beta1"
                     kind = "ProviderConfig"
@@ -48,6 +67,12 @@ _items = [
                         providerConfigRef = {
                             name = "default"
                             kind = "ProviderConfig"
+                        }
+                        # Use errors-only profile to reduce footprint for e2e testing
+                        values = {
+                            profiles = ["errors-only"]
+                            # Disable hooks to speed up install
+                            asHook = False
                         }
                     }
                 }
